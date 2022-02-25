@@ -12,6 +12,20 @@ export function getAppointmentsForDay(state, someDay) {
   return result;
 }
 
+export function getInterviewersForDay(state, someDay) {
+  const foundDay = state.days.find(dayContainer => {
+    return dayContainer.name === someDay;
+  });
+
+  const result = foundDay
+    ? foundDay.interviewers.map(interviewerId => {
+        return state.interviewers[interviewerId];
+      })
+    : [];
+
+  return result;
+}
+
 export function getInterview(state, interview) {
   if (!interview) {
     return null;
