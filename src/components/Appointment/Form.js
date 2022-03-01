@@ -8,7 +8,7 @@ export default function Form(props) {
 
   const reset = () => {
     setStudent("");
-    setInterviewer("");
+    setInterviewer(null);
   };
 
   const cancel = () => {
@@ -31,7 +31,7 @@ export default function Form(props) {
         </form>
         <InterviewerList
           onChange={setInterviewer}
-          value={interviewer}
+          interviewer={interviewer}
           interviewers={props.interviewers}
         />
       </section>
