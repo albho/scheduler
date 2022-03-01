@@ -9,6 +9,30 @@ export default function useApplicationData() {
     interviewers: {},
   });
 
+  // returns updated days array with correct number of spots
+  const setSpots = action => {
+    let spots = 0;
+
+    for (const day of state.days) {
+      if (day.name === state.day) {
+        spots = day.spots
+      }
+    }
+
+    const days = [...state.days];
+    for (const day of days) {
+      if (day.name === state.day) {
+        if (action === "booking") {
+          day.spots = spots - 1;
+        } else {
+          day.spots = spots + 1;
+        }
+      }
+    }
+
+    return days;
+  };
+
   useEffect(() => {
     Promise.all([
       axios.get("/api/days"),
@@ -41,9 +65,11 @@ export default function useApplicationData() {
       [id]: appointment,
     };
 
-    return axios
-      .put(`/api/appointments/${id}`, { interview })
-      .then(() => setState({ ...state, appointments }));
+    const days = setSpots("booking");
+
+    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
+      setState(prev => ({ ...prev, appointments, days }));
+    });
   };
 
   const cancelInterview = id => {
@@ -57,9 +83,11 @@ export default function useApplicationData() {
       [id]: appointment,
     };
 
+    const days = setSpots();
+
     return axios
       .delete(`/api/appointments/${id}`)
-      .then(() => setState({ ...state, appointments }));
+      .then(() => setState(prev => ({ ...prev, appointments, days })));
   };
 
   return { state, setDay, bookInterview, cancelInterview };
