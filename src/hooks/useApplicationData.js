@@ -10,6 +10,7 @@ export default function useApplicationData() {
   });
 
   // returns updated days array with correct number of spots
+  // bug - editing exisiting appointment takes up another spot
   const setSpots = action => {
     let spots = 0;
 
