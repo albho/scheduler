@@ -12,50 +12,48 @@ export default function useApplicationData() {
       day.appointments.includes(appointmentId)
     );
 
-    const updatedSpotsCount = newState.days[
-      currentDayIndex
-    ].appointments.reduce((accumulator, appointment) => {
-      const interview = newState.appointments[appointment].interview;
-      if (interview === null) {
-        return accumulator + 1;
-      }
+    const currentDayAppointments = newState.days[currentDayIndex].appointments;
+    const updatedSpotsCount = currentDayAppointments.reduce(
+      (accumulator, appointment) => {
+        const interview = newState.appointments[appointment].interview;
+        if (interview === null) {
+          return accumulator + 1;
+        }
 
-      return accumulator;
-    }, 0);
+        return accumulator;
+      },
+      0
+    );
 
-    newState.days[currentDayIndex].spots = updatedSpotsCount;
+    return (newState.days[currentDayIndex].spots = updatedSpotsCount);
   };
 
   // update state
   const reducer = (state, action) => {
-    let newState = { ...state };
-
     switch (action.type) {
       case SET_DAY: {
-        newState.day = action.value;
-        return newState;
+        return { ...state, day: action.value };
       }
 
       case SET_APPLICATION_DATA: {
-        return { ...newState, ...action.value };
+        return { ...state, ...action.value };
       }
 
       case SET_INTERVIEW: {
-        const { appointmentId, interview } = action.value;
+        const { id, interview } = action.value;
 
         const appointment = {
-          ...state.appointments[appointmentId],
+          ...state.appointments[id],
           interview: interview ? { ...interview } : null,
         };
 
         const appointments = {
           ...state.appointments,
-          [appointmentId]: appointment,
+          [id]: appointment,
         };
 
-        newState = { ...newState, appointments };
-        updateRemainingSpots(newState, appointmentId);
-
+        const newState = { ...state, appointments };
+        updateRemainingSpots(newState, id);
         return newState;
       }
 
@@ -93,15 +91,9 @@ export default function useApplicationData() {
         },
       });
     });
-  }, []);
 
-  // enable WebSockets
-  useEffect(() => {
+    // enable WebSockets
     const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-
-    webSocket.onopen = () => {
-      webSocket.send("ping");
-    };
 
     webSocket.onmessage = event => {
       const msg = JSON.parse(event.data);
@@ -121,23 +113,21 @@ export default function useApplicationData() {
   const setDay = day => dispatch({ type: SET_DAY, value: day });
 
   // book or update interview
-  const bookInterview = (appointmentId, interview) => {
-    return axios
-      .put(`/api/appointments/${appointmentId}`, { interview })
-      .then(() => {
-        return dispatch({
-          type: SET_INTERVIEW,
-          value: { appointmentId, interview },
-        });
+  const bookInterview = (id, interview) => {
+    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
+      return dispatch({
+        type: SET_INTERVIEW,
+        value: { id, interview },
       });
+    });
   };
 
   // cancel interview
-  const cancelInterview = appointmentId => {
-    return axios.delete(`/api/appointments/${appointmentId}`).then(() => {
+  const cancelInterview = id => {
+    return axios.delete(`/api/appointments/${id}`).then(() => {
       return dispatch({
         type: SET_INTERVIEW,
-        value: { appointmentId, interview: null },
+        value: { id, interview: null },
       });
     });
   };
