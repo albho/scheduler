@@ -7,25 +7,20 @@ export default function useApplicationData() {
   const SET_INTERVIEW = "SET_INTERVIEW";
 
   // update number of empty spots remaining available for booking
-  const updateRemainingSpots = (newState, appointmentId) => {
-    const currentDayIndex = newState.days.findIndex(day =>
-      day.appointments.includes(appointmentId)
-    );
+  const updateRemainingSpots = (newState) => {
+    const dayIndex = newState.days.findIndex(day => (day.name === newState.day));
 
-    const currentDayAppointments = newState.days[currentDayIndex].appointments;
-    const updatedSpotsCount = currentDayAppointments.reduce(
-      (accumulator, appointment) => {
-        const interview = newState.appointments[appointment].interview;
-        if (interview === null) {
-          return accumulator + 1;
-        }
+    const currentDayAppointments = newState.days[dayIndex].appointments;
 
-        return accumulator;
-      },
-      0
-    );
+    let spots = 0;
+    currentDayAppointments.forEach(appointmentId => {
+      const interview = newState.appointments[appointmentId].interview;
+      if (interview === null) {
+        spots++;
+      }
+    });
 
-    return (newState.days[currentDayIndex].spots = updatedSpotsCount);
+    return (newState.days[dayIndex].spots = spots);
   };
 
   // update state
@@ -53,7 +48,7 @@ export default function useApplicationData() {
         };
 
         const newState = { ...state, appointments };
-        updateRemainingSpots(newState, id);
+        updateRemainingSpots(newState);
         return newState;
       }
 
