@@ -95,6 +95,28 @@ export default function useApplicationData() {
     });
   }, []);
 
+  // enable WebSockets
+  useEffect(() => {
+    const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+
+    webSocket.onopen = () => {
+      webSocket.send("ping");
+    };
+
+    webSocket.onmessage = event => {
+      const msg = JSON.parse(event.data);
+
+      if (msg.type === SET_INTERVIEW) {
+        const { id, interview } = msg;
+        return dispatch({ type: SET_INTERVIEW, value: { id, interview } });
+      }
+    };
+
+    return () => {
+      webSocket.close();
+    };
+  }, []);
+
   // set current day
   const setDay = day => dispatch({ type: SET_DAY, value: day });
 
