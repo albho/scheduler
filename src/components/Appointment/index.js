@@ -30,6 +30,7 @@ export default function Appointment(props) {
     props.interview ? SHOW : EMPTY
   );
 
+  // render correct view - necessary due to WebSockets implementation
   useEffect(() => {
     if (mode === EMPTY && props.interview) {
       return transition(SHOW);
@@ -40,6 +41,7 @@ export default function Appointment(props) {
     }
   }, [mode, props.interview, transition]);
 
+  // save new or updated appointment
   const save = (name, interviewer) => {
     const interview = {
       student: name,
@@ -54,6 +56,7 @@ export default function Appointment(props) {
       .catch(() => transition(ERROR_SAVE, true));
   };
 
+  // delete appointment
   const confirmDelete = () => {
     transition(DELETING, true);
 
