@@ -1,5 +1,25 @@
 # Interview Scheduler
 
+A single-page React application that allows users to book, edit, and cancel interviews. 
+
+[View on Netlify](link)
+
+## Stack:
+Front End:
+- React
+- Axios
+- SCSS
+
+Back End:
+- Node.js
+- WebSockets
+- PostgreSQL
+
+Testing:
+- Jest
+- Cypress
+- Storybook
+
 ## Setup
 
 Install dependencies with `npm install`.
