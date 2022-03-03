@@ -12,6 +12,7 @@ Front End:
 
 Back End:
 - Node.js
+- Express
 - WebSockets
 - PostgreSQL
 
@@ -19,6 +20,8 @@ Testing:
 - Jest
 - Cypress
 - Storybook
+- Webpack Dev Server
+- Testing Library
 
 ## Setup
 
