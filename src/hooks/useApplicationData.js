@@ -7,8 +7,8 @@ export default function useApplicationData() {
   const SET_INTERVIEW = "SET_INTERVIEW";
 
   // update number of empty spots remaining available for booking
-  const updateRemainingSpots = (newState) => {
-    const dayIndex = newState.days.findIndex(day => (day.name === newState.day));
+  const updateRemainingSpots = newState => {
+    const dayIndex = newState.days.findIndex(day => day.name === newState.day);
 
     const currentDayAppointments = newState.days[dayIndex].appointments;
 
